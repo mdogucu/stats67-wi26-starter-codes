@@ -176,5 +176,4 @@ T = 2X + Y.
 **b)** Assuming \(X\) and \(Y\) are independent, find the variance of the total commute time \(Var(T)\).  
 *(Show how the variance rule applies.)*
 
-**c)** In one sentence, explain why the assumption of independence matters for part (b) but not for part (a).
 
