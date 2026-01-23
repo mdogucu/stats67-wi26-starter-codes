@@ -1,0 +1,379 @@
+# Discrete Distributions
+
+```{r}
+#| echo: false
+#| message: false
+library(tidyverse)
+library(ggplot2)
+```
+
+## Bernoulli Distribution
+
+The Bernoulli distribution represents the outcome (success/failure) of an event with success probability of $\pi$.
+
+$X\sim Bernoulli(\pi)$
+
+| x    | 0       | 1     |
+|:-----|:--------|:------|
+| f(x) | $1-\pi$ | $\pi$ |
+
+pmf: $f(x)=\pi^x(1-\pi)^{1-x},\ x\in \{0,1\}$
+
+
+$\mu=E(X)=\pi$
+
+$\sigma^2=Var(X)=\pi(1-\pi)$
+
+### Example
+
+```{r}
+#| echo: false
+knitr::include_graphics("https://i.ytimg.com/vi/vbFWfmIyr3Q/maxresdefault.jpg")
+```
+
+From a deck of 52 cards, randomly pick a card. Let $X$ be the random variable that represents the number of heart cards in a single random card draw.
+
+
+## Geometric Distribution
+
+The Geometric distribution represents the number of failures before the first success when running independent trials with success probability $p$.
+
+$X\sim Geometric(\pi)$
+
+pmf: $f(x)=(1-\pi)^x\pi\ ,x=0,1,2,...$
+
+$\mu=E(X)=\frac{1-\pi}{\pi}$
+
+$\sigma^2=Var(X)=\frac{1-\pi}{\pi^2}$
+
+```{r}
+#| echo: false
+#| warning: false
+# Parameters
+pi_values <- c(0.1, 0.3, 0.5)  # Probability values
+x <- 0:10  # Range of x values (number of failures before the first success)
+
+data <- data.frame(
+  x = rep(x, times = length(pi_values)),
+  f_x = unlist(lapply(pi_values, function(pi) dgeom(x, prob = pi))),
+  prob = rep(pi_values, each = length(x))
+)
+
+# Plot using ggplot2
+ggplot(data, aes(x = x, y = f_x, color = factor(prob), group = prob)) +
+  geom_line(size=1) +             # Add lines
+  geom_point(size=2) +            # Add points
+  scale_color_manual(
+    values = c("red", "blue", "green"),
+    name = expression(pi)
+  ) + 
+  scale_x_continuous(breaks=0:10) +
+  labs(
+    title = "PMF of Geometric Distribution",
+    x = "Number of Failures (x)",
+    y = "f(x)"
+  ) +
+  theme_minimal(base_size = 16)  # Increase overall font size
+```
+
+This code computes and plots the geometric PMF for different success probabilities ($\pi$ = 0.1, 0.3, 0.5, where $x$ represents the number of failures before the first success.
+The plot shows that larger $\pi$ places more probability on small $x$, meaning you are more likely to get a success quickly (fewer failures).
+When $\pi$ is smaller (e.g., 0.1), the distribution decreases more slowly, so higher values of $x$ are more likely and it typically takes longer to achieve the first success.
+
+
+### Exercise
+
+From a deck of 52 cards, randomly pick a card, if the suit of the card picked is not heart, then replace the card into the deck, shuffle the deck and pick a new card. Repeat the procedure until the first heart is picked.
+
+
+What is the probability that you will draw 3 cards before drawing the first heart?
+
+
+
+What is the probability that you will draw at least 3 card before drawing the first heart?
+
+
+```{r}
+# f(3)
+dgeom(x = 3, prob = 0.25)
+
+# Calculate F(3) by f(0) + f(1) + f(2) + f(3)
+dgeom(x = 0, prob = 0.25) + 
+  dgeom(x = 1, prob = 0.25)  + 
+  dgeom(x = 2, prob = 0.25) + 
+  dgeom(x=3, prob=0.25)
+
+sum(dgeom(x=0:3, prob=0.25))
+
+# Directly calculate F(3)
+pgeom(q = 3, prob = 0.25) 
+```
+
+
+## Binomial Distribution
+
+The Binomial distribution represents the number of successes out of $n$ independent trials with success probability $\pi$.
+
+$X\sim Binomial(n,\pi)$
+
+pmf: $f(x)={n \choose x}\pi^x(1-\pi)^{n-x},\ x\in \{0,1,2,...,n\}$
+
+$E(X)=n\pi$
+
+$Var(X)=n\pi(1-\pi)$
+
+```{r}
+#| echo: false
+#| warning: false
+
+# Binomial, fixed n=10
+n <- 10  # Number of trials
+pi_values <- c(0.2, 0.5, 0.8)  # Probability of success
+x <- 0:n  # Range of x values (number of successes)
+
+# Create a data frame for ggplot
+data <- data.frame(
+  x = rep(x, times = length(pi_values)),
+  f_x = unlist(lapply(pi_values, function(pi) dbinom(x, size = n, prob = pi))),
+  prob = rep(pi_values, each = length(x))
+)
+
+# Plot using ggplot2
+ggplot(data, aes(x = x, y = f_x, color = factor(prob), group = prob)) +
+  geom_line(size = 1) +             # Add lines
+  geom_point(size = 2) +            # Add points
+  scale_color_manual(
+    values = c("red", "blue", "green"),
+    name = expression(pi)
+  ) + 
+  scale_x_continuous(breaks = 0:n) +
+  labs(
+    title = "PMF of Binomial Distribution, fixed n=10",
+    x = "Number of Successes (x)",
+    y = "f(x)"
+  ) +
+  theme_minimal(base_size = 16)     # Increase overall font size
+```
+
+This code plots the binomial PMF with a fixed number of trials $n = 10$ while changing the success probability $\pi$ as (0.2, 0.5, 0.8).
+The figure shows that as $\pi$ increases, the distribution shifts to the right, meaning larger numbers of successes become more probable. 
+When $\pi$ = 0.5, the PMF is roughly symmetric and centered near $np = 5$.
+For $p = 0.2$ (red), most probability is concentrated at small $x$, while for $\pi$ = 0.8 (green), most probability is concentrated at large $x$ near 8–10.
+
+
+```{r}
+#| warning: false
+#| echo: false
+pi <- 0.5  # Fixed probability of success
+n_values <- c(10, 20, 40)  # Different values for number of trials
+x_values <- lapply(n_values, function(n) 0:n)  # Range of x values for each n
+
+# Create a data frame for ggplot
+data <- data.frame(
+  x = unlist(x_values),
+  f_x = unlist(lapply(seq_along(n_values), function(i) dbinom(x_values[[i]], size = n_values[i], prob = pi))),
+  n = factor(rep(n_values, times = sapply(x_values, length)))  # Add n as a factor
+)
+
+# Plot using ggplot2
+ggplot(data, aes(x = x, y = f_x, color = n, group = n)) +
+  geom_line(size = 1) +             # Add lines
+  geom_point(size = 2) +            # Add points
+  scale_color_manual(
+    values = c("red", "blue", "green"),
+    name = "n"
+  ) + 
+  labs(
+    title = expression(paste("PMF of Binomial Distribution, fixed ", pi, "=0.5")),
+    x = "Number of Successes (x)",
+    y = "f(x)"
+  ) +
+  theme_minimal(base_size = 16)     # Increase overall font size
+```
+
+This code computes and plots the binomial PMF with a fixed success probability $\pi$ = 0.5 for three different numbers of trials ($n$ = 10, 20, 40).
+The plot shows that as $n$ increases, the distribution shifts to the right (centered around $np$, about 5, 10, and 20), becomes more spread out, and looks more bell-shaped.
+At the same time, the peak probability for any single value of $x$ becomes smaller because the probability is distributed across a wider range of outcomes.
+
+### Exercise
+
+From a deck of 52 cards, randomly pick a card and record the suit, then replace the card into the deck, shuffle the deck, pick a new card and record the suit.
+Repeat the procedure 10 times.
+
+What is the probability that 8 of the 10 suits recorded are hearts?
+
+What is the probability that at least 8 of the 10 suits recorded are hearts?
+
+```{r}
+# f(8)
+dbinom(x = 8, size = 10, prob = 0.25)
+
+# f(8) + f(9) + f(10)
+dbinom(x = 8, size = 10, prob = 0.25) + 
+  dbinom(x = 9, size = 10, prob = 0.25) + 
+  dbinom(x = 10, size = 10, prob = 0.25)
+
+sum(dbinom(x = 8:10, size = 10, prob = 0.25))
+
+# 1 - F(7)
+1 - pbinom(q = 7, size = 10, prob = 0.25)
+```
+
+## Poisson Distribution
+
+The Poisson distribution can represent the number of events occurring within a fixed period of time.
+
+$X\sim Poisson(\lambda)$
+
+pmf: $f(x)=\frac{\lambda^x}{x!}e^{-\lambda},\ x=0,1,2,...$
+
+$E(X)=\lambda$
+
+$Var(X)=\lambda$
+
+```{r, echo=F, warning=F}
+# Parameters for Poisson distribution
+lambda_values <- c(1, 2, 5, 10)  # Lambda values
+x <- 0:20  # Range of x values
+
+# Create a data frame for ggplot
+data <- data.frame(
+  x = rep(x, times = length(lambda_values)),
+  f_x = unlist(lapply(lambda_values, function(lambda) dpois(x, lambda = lambda))),
+  lambda = rep(lambda_values, each = length(x))
+)
+
+# Plot using ggplot2
+ggplot(data, aes(x = x, y = f_x, color = factor(lambda), group = lambda)) +
+  geom_line(size = 1) +             # Add lines
+  geom_point(size = 2) +            # Add points
+  scale_color_manual(
+    values = c("red", "blue", "green", "purple"),
+    name = expression(lambda)
+  ) + 
+  scale_x_continuous(breaks = 0:20) +
+  labs(
+    title = "PMF of Poisson Distribution",
+    x = "Number of Events (x)",
+    y = "f(x)"
+  ) +
+  theme_minimal(base_size = 16)     # Increase overall font size
+```
+
+This code computes and plots the Poisson PMF for several rate parameters \(\lambda = 1, 2, 5, 10\), where \(x\) is the number of events in a fixed time interval. The plot shows that as \(\lambda\) increases, the distribution shifts to the right and the most likely event count moves to larger values (around \(\lambda\)). The distribution also becomes more spread out, meaning there is more variability in the number of events when the average rate \(\lambda\) is larger.
+
+
+### Exercise
+
+It is estimated that one bus arrives at the stop every 6 minutes.
+What is the probability that 10 buses will arrive at the stop during the next hour? What is the probability that the number of buses that arrive next hour is between 4 and 15 (both included)?
+
+```{r}
+lambda = 60 / 6
+
+# f(10)
+dpois(x = 10, lambda = lambda)
+
+# f(4) + f(5) + ... + f(15)
+sum(dpois(x = 4:15, lambda = lambda))
+
+# F(15) - F(3)
+ppois(q = 15, lambda = lambda) - ppois(q = 3, lambda = lambda)
+```
+
+
+
+
+# Probability Density Function (pdf)
+
+For a continuous random variable  $X$, the pdf is denoted by $f(x)$ and satisfies:
+
+1. $f(x)\geq0$ for all $x$,
+2. $\int_{-\infty}^{\infty} f(x) \, dx = 1$.
+
+```{r}
+#| echo: false
+# Example: f(x) = 2x for x in (0, 1)
+x <- seq(0, 1, by = 0.01)
+y <- 2*x
+
+# Create data frame
+data <- data.frame(x = x, y = y)
+
+# Plot using ggplot2
+ggplot(data, aes(x = x, y = y)) +
+  geom_line(size = 1) +
+  labs(
+    title = "PDF of f(x)=2x in (0,1)",
+    x = "x",
+    y = "f(x)"
+  ) +
+  theme_minimal(base_size = 16)
+```
+
+
+## Probability over an interval
+
+The probability that X (random variable) falls within the interval [a,b] is found by taking the integral of the pdf from a to b. This tells us how likely it is that X will take in a value within this range. 
+$P(a \leq X \leq b) = \int_{a}^{b} f(x) \, dx$ 
+
+
+# Cumulative Distribution Function (CDF)
+
+The Cumulative Distribution Function, F(x),gives us the probability that the random variable X is less than or equal to x.
+
+The CDF of $X$ is given by $F(x) = \int_{-\infty}^{x} f(t) \, dt$.
+
+```{r}
+#| echo: false
+# Example: f(x) = 2x for x in (0, 1)
+x <- seq(0, 1, by = 0.01)
+y_cdf <- x^2
+
+# Create data frame
+data <- data.frame(x = x, y_cdf = y_cdf)
+
+# Plot using ggplot2
+ggplot(data, aes(x = x, y = y_cdf)) +
+  geom_line(size = 1) +
+  labs(
+    title = "CDF of f(x)=2x in (0,1)",
+    x = "x",
+    y = "Probability"
+  ) +
+  theme_minimal(base_size = 16)
+```
+
+# Expected Value
+
+The expected value of $X$ is given by $E(X) = \int_{-\infty}^{\infty} x \cdot f(x) \, dx$.
+
+```{r}
+# Example: f(x) = 2x for x in (0, 1)
+mean_val <- integrate(function(x) x * 2*x, 0, 1)$value
+mean_val
+```
+
+# Variance
+
+The variance of $X$ is given by $\text{Var}(X) = E((X - E(X))^2) = \int_{-\infty}^{\infty} (x - E(X))^2 \cdot f(x) \, dx$.
+
+```{r}
+# Example: f(x) = 2x for x in (0, 1)
+var_val <- integrate(function(x) (x - mean_val)^2 * 2*x, 0, 1)$value
+var_val
+```
+
+What is the relationship between a CDF and a PDF?
+
+For continuous random variables, 
+
+- the PDF itself is NOT a probability (probabilities at single points are 0), but rather a density that must be integrated over an interval to get probability
+
+- The CDF always ranges from 0 to 1 and is non-decreasing
+
+- The area under the entire PDF curve equals 1
+
+- For continuous random variables, the PDF itself is NOT a probability (probabilities at single points are 0), but rather a density that must be integrated over an interval to get probability
+
+- The area under the entire PDF curve equals 1
