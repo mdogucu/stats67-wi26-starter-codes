@@ -36,7 +36,7 @@ From a deck of 52 cards, randomly pick a card. Let $X$ be the random variable th
 
 ## Geometric Distribution
 
-The Geometric distribution represents the number of failures before the first success when running independent trials with success probability $p$.
+The Geometric distribution represents the number of failures before the first success when running independent trials with success probability $\pi$.
 
 $X\sim Geometric(\pi)$
 
@@ -90,7 +90,7 @@ What is the probability that you will draw 3 cards before drawing the first hear
 
 
 
-What is the probability that you will draw at least 3 card before drawing the first heart?
+What is the probability that you will draw at least 3 cards before drawing the first heart?
 
 
 ```{r}
@@ -158,7 +158,7 @@ ggplot(data, aes(x = x, y = f_x, color = factor(prob), group = prob)) +
 This code plots the binomial PMF with a fixed number of trials $n = 10$ while changing the success probability $\pi$ as (0.2, 0.5, 0.8).
 The figure shows that as $\pi$ increases, the distribution shifts to the right, meaning larger numbers of successes become more probable. 
 When $\pi$ = 0.5, the PMF is roughly symmetric and centered near $np = 5$.
-For $p = 0.2$ (red), most probability is concentrated at small $x$, while for $\pi$ = 0.8 (green), most probability is concentrated at large $x$ near 8–10.
+For $\pi = 0.2$ (red), most probability is concentrated at small $x$, while for $\pi$ = 0.8 (green), most probability is concentrated at large $x$ near 8–10.
 
 
 ```{r}
@@ -314,7 +314,7 @@ ggplot(data, aes(x = x, y = y)) +
 
 ## Probability over an interval
 
-The probability that X (random variable) falls within the interval [a,b] is found by taking the integral of the pdf from a to b. This tells us how likely it is that X will take in a value within this range. 
+The probability that X (random variable) falls within the interval [a,b] is found by taking the integral of the pdf from a to b. This tells us how likely it is that X will take on a value within this range. 
 $P(a \leq X \leq b) = \int_{a}^{b} f(x) \, dx$ 
 
 
