@@ -368,12 +368,12 @@ What is the relationship between a CDF and a PDF?
 
 For continuous random variables, 
 
-- the PDF itself is NOT a probability (probabilities at single points are 0), but rather a density that must be integrated over an interval to get probability
+- The PDF itself is NOT a probability (probabilities at single points are 0), but rather a density that must be integrated over an interval to get probability
 
 - The CDF always ranges from 0 to 1 and is non-decreasing
 
 - The area under the entire PDF curve equals 1
 
-- For continuous random variables, the PDF itself is NOT a probability (probabilities at single points are 0), but rather a density that must be integrated over an interval to get probability
+- The CDF is the integral of the PDF: F(x) = ∫_{-∞}^{x} f(t) dt
 
-- The area under the entire PDF curve equals 1
+- The PDF is the derivative of the CDF: f(x) = dF(x)/dx
